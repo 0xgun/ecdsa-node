@@ -7,9 +7,9 @@ app.use(cors());
 app.use(express.json());
 
 const balances = {
-  "0x1": 100,
-  "0x2": 50,
-  "0x3": 75,
+  "3720c30ebbb744a878e71f30f5ce50943c246d85": 100,
+  "24d04b31ee43b2e2cfc4a86b33489819224652e3": 50,
+  "e04e09fb3c2e87367f559f91507b600e6eb6e915": 75,
 };
 
 app.get("/balance/:address", (req, res) => {
@@ -19,6 +19,8 @@ app.get("/balance/:address", (req, res) => {
 });
 
 app.post("/send", (req, res) => {
+
+
   const { sender, recipient, amount } = req.body;
 
   setInitialBalance(sender);
