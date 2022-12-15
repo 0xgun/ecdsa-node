@@ -1,38 +1,61 @@
 import server from "./server";
 
-import * as secp from "ethereum-cryptography/secp256k1";
+function Wallet({ transactionData, setTransactionData, balance, setBalance }) {
+    async function onChange(evt) {
+        const { name, value } = evt.target;
 
-import {toHex} from "ethereum-cryptography/utils";
-function Wallet({ address, setAddress, balance, setBalance,privateKey, setPrivateKey }) {
-  async function onChange(evt) {
-    const privateKey = evt.target.value;
-    setPrivateKey(privateKey);
-    const address = toHex(secp.getPublicKey(privateKey));
-    setAddress(address);
-    if (address) {
-      const {
-        data: { balance },
-      } = await server.get(`balance/${address}`);
-      setBalance(balance);
-    } else {
-      setBalance(0);
+        if (name == "publicKey" && value) {
+            const {
+                data: { balance },
+            } = await server.get(`balance/${value}`);
+            setBalance(balance);
+        } else if (name == "publicKey" && !value) {
+            setBalance(0);
+        }
+
+        setTransactionData((prevData) => {
+            return {
+                ...prevData,
+                [name]: value,
+            };
+        });
     }
-  }
 
-  return (
-    <div className="container wallet">
-      <h1>Your Wallet</h1>
+    return (
+        <div className="container wallet">
+            <h1>Your Wallet</h1>
 
-      <label>
-        Private Key
-        <input placeholder="Enter Your Private Key" value={privateKey} onChange={onChange}></input>
-      </label>
-<div>
-  Address: {address.slice(0,10)}...
-</div>
-      <div className="balance">Balance: {balance}</div>
-    </div>
-  );
+            <label>
+                Sender Public Key
+                <input
+                    placeholder="Type an address, for example: 0x1"
+                    value={transactionData.publicKey}
+                    onChange={onChange}
+                    name="publicKey"
+                ></input>
+            </label>
+            <label>
+                Message Hex
+                <input
+                    placeholder="Type an address, for example: 0x1"
+                    value={transactionData.messageHex}
+                    onChange={onChange}
+                    name="messageHex"
+                ></input>
+            </label>
+            <label>
+                Sign Transaction Hex
+                <input
+                    placeholder="Type an address, for example: 0x1"
+                    value={transactionData.signTransactionHex}
+                    onChange={onChange}
+                    name="signTransactionHex"
+                ></input>
+            </label>
+
+            <div className="balance">Balance: {balance}</div>
+        </div>
+    );
 }
 
 export default Wallet;
